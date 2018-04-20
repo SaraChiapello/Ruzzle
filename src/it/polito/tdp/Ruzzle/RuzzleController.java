@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class RuzzleController {
@@ -91,17 +92,36 @@ public class RuzzleController {
 
     @FXML // fx:id="txtStatus"
     private Label txtStatus; // Value injected by FXMLLoader
+    
+    @FXML // fx:id="txtResult"
+    private TextArea txtResult; // Value injected by FXMLLoader
 
     @FXML
     void handleProva(ActionEvent event) {
     	String parola=txtParola.getText();
     	if(parola.length()==0) {
+    		txtStatus.setText("Errore:parola vuota");
     		return;
     	}
     	parola=parola.toUpperCase();
     	//dovrei ancora controllare che ci siano solo caratteri
+    	if(!parola.matches("[A-Z]+")) { //è fatto solo da lettere maiuscole anche ripetute?
+    		txtStatus.setText("Errore: caratteri non ammessi");
+    		return;
+    	}
     	List<Pos> percorso=model.trovaParola(parola);
-    	System.out.println(percorso);
+    	if(percorso !=null) {
+    			
+ //   	System.out.println(percorso);
+	    	for(Button b:letters.values()) {
+	    		b.setDefaultButton(false);;
+	    	}
+	    	for(Pos p:percorso) {
+	    		letters.get(p).setDefaultButton(true);
+	    	}
+    	}else {
+    		txtStatus.setText("Errore: Parola non trovata");
+    	}
     }
     
     @FXML
@@ -109,6 +129,17 @@ public class RuzzleController {
     	model.reset();
 
     }
+    
+    @FXML
+    void handleRisolvi(ActionEvent event) {
+    	List<String> tutte =model.trovaTutte();
+    	txtResult.clear();
+    	txtResult.appendText(String.format("Trovare %d soluzioni\n",tutte.size()));
+    	for(String s:tutte) {
+    		txtResult.appendText(s+"\n");
+    	}
+    }
+
 
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -131,6 +162,7 @@ public class RuzzleController {
         assert let31 != null : "fx:id=\"let31\" was not injected: check your FXML file 'Ruzzle.fxml'.";
         assert let32 != null : "fx:id=\"let32\" was not injected: check your FXML file 'Ruzzle.fxml'.";
         assert let33 != null : "fx:id=\"let33\" was not injected: check your FXML file 'Ruzzle.fxml'.";
+//        assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Ruzzle.fxml'.";
         assert txtStatus != null : "fx:id=\"txtStatus\" was not injected: check your FXML file 'Ruzzle.fxml'.";
 
     }
@@ -164,7 +196,7 @@ public class RuzzleController {
     		this.letters.get(cell).textProperty().bind(m.getBoard().getCellValueProperty(cell));
     	}
     	
-    	this.txtStatus.textProperty().bind(m.statusTextProperty());
+    //	this.txtStatus.textProperty().bind(m.statusTextProperty());
     	
     }
 }
