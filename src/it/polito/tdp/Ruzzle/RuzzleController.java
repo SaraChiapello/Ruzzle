@@ -4,8 +4,10 @@
 
 package it.polito.tdp.Ruzzle;
 
+
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -92,7 +94,14 @@ public class RuzzleController {
 
     @FXML
     void handleProva(ActionEvent event) {
-
+    	String parola=txtParola.getText();
+    	if(parola.length()==0) {
+    		return;
+    	}
+    	parola=parola.toUpperCase();
+    	//dovrei ancora controllare che ci siano solo caratteri
+    	List<Pos> percorso=model.trovaParola(parola);
+    	System.out.println(percorso);
     }
     
     @FXML
